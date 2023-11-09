@@ -88,3 +88,4 @@ node_modules
 ## python virtual env
 venv
 
+*.scel
