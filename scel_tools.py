@@ -1,5 +1,6 @@
 import struct
 import sys
+import os
 
 
 def read_utf16_str(f, offset=-1, len=2):
@@ -43,9 +44,6 @@ def get_py_map(f):
 
 
 def get_records(f, file_size, hz_offset, py_map):
-    hz_offset = get_hz_offset(f)
-    py_map = get_py_map(f)
-
     f.seek(hz_offset)
     records = []
     while f.tell() != file_size:
@@ -81,3 +79,17 @@ def get_dict_meta(f):
     desc = read_utf16_str(f, 0x540, 0xd40 - 0x540).rstrip('\0')
     samples = read_utf16_str(f, 0xd40, 0x1540 - 0xd40).rstrip('\0')
     return title, category, desc, samples
+
+
+def get_records_from_scel(scel_file_path):
+    with open(scel_file_path, 'rb') as scel_file:
+        hz_offset = get_hz_offset(scel_file)
+
+        (title, category, desc, samples) = get_dict_meta(scel_file)
+        print("title: %s\ncategory: %s\ndesc: %s\nsamples: %s" % (title, category, desc, samples))
+
+        py_map = get_py_map(scel_file)
+
+        file_size = os.path.getsize(scel_file_path)
+        words = get_records(scel_file, file_size, hz_offset, py_map)
+        return words
