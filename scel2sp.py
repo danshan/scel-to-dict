@@ -2,6 +2,8 @@ import os
 import struct
 import sys
 
+from pypinyin.style._utils import get_initials, get_finals
+
 
 def read_utf16_str(f, offset=-1, len=2):
     if offset >= 0:
@@ -90,11 +92,61 @@ def get_words_from_scel(scel_file_path):
         return words
 
 
-def save(records, f):
-    records_translated = list(map(lambda x: "%s\t%s" % (
-        x[1], x[0]), records))
-    f.write("\n".join(records_translated))
-    return records_translated
+def save(records, fout):
+    records_translated = list(map(lambda x: "%s\t%s" % (x[1], x[0]), records))
+    fout.write("\n".join(records_translated))
+
+
+def create_dict(textfile):
+    dict = {}
+    with open(textfile, "r", encoding="utf-8") as file:
+        for line in file:
+            (key, value) = line.split()
+            dict[key] = value
+    # print(dict)
+    return dict
+
+
+def convert_double(record_dict, type_folder):
+    initials_dict = create_dict(os.path.join('./double', type_folder, 'initials.txt'))
+    finals1_dict = create_dict(os.path.join('./double', type_folder, 'finals1.txt'))
+    finals2_dict = create_dict(os.path.join('./double', type_folder, 'finals2.txt'))
+
+    results = {}
+    for cn, py_list in record_dict.items():
+        words = []
+        for py in py_list.split(' '):
+            word_initials = get_initials(py, False)
+            word_finals = get_finals(py, False)
+            if word_initials == '':
+                words.append(finals2_dict[word_finals])
+            else:
+                words.append(initials_dict[word_initials] + finals1_dict[word_finals])
+        results[cn] = ''.join(words)
+
+    return results
+
+
+def convert_dict(record_dict, double_type, out_format):
+    '''
+    转换成指定格式的词库
+    :param record_dict: 词典 dict
+    :param fout: 输入文件
+    :param double_type: 双拼类型
+    :param out_format: 输出格式
+    :return:
+    '''
+    fout = out_format + '.txt'
+    py_dict = record_dict
+    if double_type is not None:
+        py_dict = convert_double(record_dict, double_type)
+
+    if out_format == 'gboard':
+        with open(os.path.join("./out", fout), "w", encoding='utf-8') as dictfout:
+            dictfout.write('# Gboard Dictionary version:1\n')
+            dictfout.write('# From OS\n')
+            for cn, py in py_dict.items():
+                dictfout.write("%s\t%s\tzh-CN\n" % (py, cn))
 
 
 def main():
@@ -105,7 +157,7 @@ def main():
         os.mkdir("./out")
 
     dict_file = "luna_pinyin.sogou.dict.yaml"
-    dict_file_content = []
+    all_records = []  # 全量词库 list
 
     for scel_file in scel_files:
         scel_file_path = os.path.join("./scel", scel_file)
@@ -113,12 +165,14 @@ def main():
         print("%s: %s 个词" % (scel_file, len(records)))
 
         with open(os.path.join("./out", scel_file.replace(".scel", ".txt")), "w") as fout:
-            dict_file_content.extend(save(records, fout))
+            save(records, fout)
+            all_records.extend(records)
         print("-" * 80)
 
-    print("合并后 %s: %s 个词" % (dict_file, len(dict_file_content) - 1))
-    with open(os.path.join("./out", dict_file), "w") as dictfout:
-        dictfout.write("\n".join(dict_file_content))
+    record_dict = {item[1]: item[0] for item in all_records}  # 全量词库 dict
+    print("合并后 %s 个词" % (len(record_dict)))
+
+    convert_dict(record_dict, 'xiaohe', 'gboard')
 
 
 if __name__ == '__main__':
