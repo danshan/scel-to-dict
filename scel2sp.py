@@ -1,8 +1,9 @@
 import os
-
+import sys
 
 from scel_tools import get_records_from_scel
-
+from double_pinyin import convert_double
+from dict_writter import write_dict
 
 def save_text(records, fout):
     records_translated = list(map(lambda x: "%s\t%s" % (x[1], x[0]), records))
@@ -10,25 +11,20 @@ def save_text(records, fout):
 
 
 
-def convert_dict(record_dict, double_type, out_format):
+def convert_dict(record_dict, double_pinyin_type, out_format):
     """
     转换成指定格式的词库
     :param record_dict: 词典 dict
-    :param double_type: 双拼类型
+    :param double_pinyin_type: 双拼类型
     :param out_format: 输出格式
     :return:
     """
-    fout = out_format + '.txt'
     py_dict = record_dict
-    if double_type is not None:
-        py_dict = convert_double(record_dict, double_type)
+    if double_pinyin_type is not None:
+        py_dict = convert_double(record_dict, double_pinyin_type)
 
     if out_format == 'gboard':
-        with open(os.path.join("./out", fout), "w", encoding='utf-8') as dictfout:
-            dictfout.write('# Gboard Dictionary version:1\n')
-            dictfout.write('# From OS\n')
-            for cn, py in py_dict.items():
-                dictfout.write("%s\t%s\tzh-CN\n" % (py, cn))
+        write_dict(py_dict, './out', out_format, double_pinyin_type)
 
 
 def main():
