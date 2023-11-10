@@ -1,3 +1,4 @@
+# 无声母时的韵母映射表
 a		aa
 ai		ai
 an		an

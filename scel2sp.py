@@ -101,6 +101,8 @@ def create_dict(textfile):
     dict = {}
     with open(textfile, "r", encoding="utf-8") as file:
         for line in file:
+            if line.strip().startswith('#'):
+                continue
             (key, value) = line.split()
             dict[key] = value
     # print(dict)
