@@ -53,6 +53,8 @@ def main():
 
     if not os.path.exists("./out"):
         os.mkdir("./out")
+    if not os.path.exists("./custom"):
+        os.mkdir("./custom")
 
     all_records = []  # 全量词库 list
 

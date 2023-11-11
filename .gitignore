@@ -91,4 +91,4 @@ venv
 *.scel
 
 __pycache__
-custom
+custom/*.txt
