@@ -86,7 +86,7 @@ def get_records_from_scel(scel_file_path):
         hz_offset = get_hz_offset(scel_file)
 
         (title, category, desc, samples) = get_dict_meta(scel_file)
-        print("title: %s\ncategory: %s\ndesc: %s\nsamples: %s" % (title, category, desc, samples))
+        #print("title: %s\ncategory: %s\ndesc: %s\nsamples: %s" % (title, category, desc, samples))
 
         py_map = get_py_map(scel_file)
 

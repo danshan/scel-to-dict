@@ -35,8 +35,6 @@ gboard 具有非常方便的双拼纠错能力. 但词库实在太拉, 研究了
 
 ```
 ├── README.md
-├── custom  # 个人词库 (.txt) 文件放到这里, 名字随意
-│     └── name.txt
 ├── double_pinyin  # 双拼方案配置文件 
 │     └── xiaohe  # 小鹤双拼
 │         ├── finals1.txt  # 韵母映射
@@ -45,9 +43,18 @@ gboard 具有非常方便的双拼纠错能力. 但词库实在太拉, 研究了
 ├── out  # 词典文件的输出目录
 │     ├── gboard_xiaohe.txt  # 生成的 gboard 词库文件
 │     └── 开发大神专用词库【官方推荐】.txt  # scel 词库转换后的结果
-├── scel  # sougou 细胞词库 (.scel) 文件放到这里, 名字随意
-│     ├── README.md
-│     └── 开发大神专用词库【官方推荐】.scel
+├── im_dicts
+│     ├── baidu_export
+│     │       └── macmini-2021_2023_11_22.txt
+│     ├── custom
+│     │       ├── name.txt
+│     │       └── words.txt
+│     ├── scel
+│     │       ├── README.md
+│     │       ├── 三字成语【官方推荐】.scel
+│     │       └── 鲁迅经典语【官方推荐】.scel
+│     └── tsinghua
+│             └── THUOCL_poem.txt
 └── scel2dict.py  # 程序启动入口
 ```
 
