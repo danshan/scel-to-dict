@@ -91,5 +91,5 @@ venv
 *.scel
 
 __pycache__
-custom
-scel
+im_dicts
+
